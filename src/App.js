@@ -1,16 +1,11 @@
 import React from 'react'
-import Footer from './Footer'
-import AddTodo from '../containers/AddTodo'
-import VisibleTodoList from '../containers/VisibleTodoList'
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
 const App = () => (
-  
+
   <div>
-    <AddTodo />
-    <VisibleTodoList />
-    <Footer />
+    My name is uzair
   </div>
 )
 export default App
