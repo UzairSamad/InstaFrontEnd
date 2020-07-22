@@ -21,7 +21,7 @@ const SignUp = () => {
             })
         }).then(res => res.json()).then(data => {
             if (data.error) {
-                M.toast({ html: data.error })
+                M.toast({ html: data.error, classes: "#c62828 red darken-3" })
             }
         })
     }
