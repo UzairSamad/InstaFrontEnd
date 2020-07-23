@@ -1,29 +1,42 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { red } from '@material-ui/core/colors'
 import M from 'materialize-css'
 
 const SignUp = () => {
+    const history = useHistory()
     const [name, setName] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [email, setEmail] = React.useState('')
 
     const onSubmit = () => {
+        let params = {
+            name,
+            password,
+            email
+        }
         fetch("/sign-up", {
             method: "post",
             headers: {
-                "Contetn-Type": "application/json"
+                "Content-Type": "application/json"
             },
+
             body: JSON.stringify({
-                name: "",
-                password: "",
-                email: ""
+                name,
+                password,
+                email
             })
+
         }).then(res => res.json()).then(data => {
             if (data.error) {
                 M.toast({ html: data.error, classes: "#c62828 red darken-3" })
+
+            } else {
+                M.toast({ html: data.message, classes: "#00e676 green accent-3" })
+                history.push('/login')
+
             }
-        })
+        }).catch(err=>console.log(err))
     }
 
     return (
