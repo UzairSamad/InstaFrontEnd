@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import M from 'materialize-css'
+import { UserContext } from '../App'
 
 const Login = () => {
+    const {state,dispatch} = useContext(UserContext)
     const history = useHistory()
     const [password, setPassword] = React.useState('')
     const [email, setEmail] = React.useState('')
 
     const onSubmit = () => {
-    
+
         fetch("/sign-in", {
             method: "post",
             headers: {
@@ -27,9 +29,10 @@ const Login = () => {
                 M.toast({ html: data.eror, classes: "#c62828 red darken-3" })
             } else {
                 console.log(data)
-                localStorage.setItem("token",data.token)
-                localStorage.setItem("user",JSON.stringify(data.user))
-                M.toast({ html:"Signed In Succecsfully", classes: "#00e676 green accent-3" })
+                localStorage.setItem("token", data.token)
+                localStorage.setItem("user", JSON.stringify(data.user))
+                dispatch({type:"USER",payload:data.user})
+                M.toast({ html: "Signed In Succecsfully", classes: "#00e676 green accent-3" })
                 history.push('/')
 
             }

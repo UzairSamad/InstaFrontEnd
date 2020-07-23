@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { createContext, useReducer, useEffect ,useContext} from 'react'
 import './App.css'
-
 import { makeStyles } from '@material-ui/core/styles';
 import NavBar from './components/Navbar'
 import Home from './screens/Home'
@@ -8,34 +7,62 @@ import Profile from './screens/Profile'
 import Login from './screens/Login'
 import SignUp from './screens/SignUp'
 import CreatePost from './screens/createPost'
-// import './App.css'
+import { reducer, initialState } from './reducers/userReducer'
 
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Route, useHistory, Switch } from 'react-router-dom'
+export const UserContext = createContext()
 
-const App = () => (
-  <BrowserRouter >
-    <NavBar />
-    <Route path="/" exact>
-      <Home />
-    </Route >
 
-    <Route path="/profile">
-      <Profile />
-    </Route >
+const Routing = () => {
+  const history = useHistory()
+  const user = JSON.parse(localStorage.getItem("user"))
+  const {state,dispatch} = useContext(UserContext)
+  useEffect(() => {
+    if (user) {
+      dispatch({type:"USER",payload:user})
+      history.push('/')
+    } else {
+      history.push('/login')
+    }
+  }, [])
 
-    <Route path="/login">
-      <Login />
-    </Route >
+  console.log(history, 'hhhhhh')
+  return (
+    <Switch >
+      <Route path="/" exact>
+        <Home />
+      </Route >
+      <Route path="/profile">
+        <Profile />
+      </Route >
+      <Route path="/login">
+        <Login />
+      </Route >
+      <Route path="/signup">
+        <SignUp />
+      </Route >
+      <Route path="/createPost">
+        <CreatePost />
+      </Route >
+    </Switch>
+  )
+}
 
-    <Route path="/signup">
-      <SignUp />
-    </Route >
+function App(props) {
+  const history = useHistory()
+  const [state, dispatch] = useReducer(reducer, initialState)
 
-    <Route path="/createPost">
-      <CreatePost />
-    </Route >
 
-  </BrowserRouter>
 
-)
+  return (
+    <UserContext.Provider value={{ state, dispatch }}>
+      <BrowserRouter >
+        <NavBar />
+        < Routing />
+      </BrowserRouter>
+    </UserContext.Provider>
+
+  )
+}
+
 export default App
