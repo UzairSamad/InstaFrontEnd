@@ -1,13 +1,21 @@
 import React from 'react'
+import { Link, useHistory } from 'react-router-dom'
+import M from 'materialize-css'
+import Loader from '../components/Loader'
 
 const CreatePost = () => {
+    const history = useHistory()
+
     const [title, setTitle] = React.useState('')
     const [body, setBody] = React.useState('')
     const [image, setImage] = React.useState('')
     const [url, setUrl] = React.useState(null)
+    const [isLoading, setIsLoading] = React.useState(false)
+
 
 
     const postData = () => {
+        setIsLoading(true)
         const data = new FormData()
         data.append("file", image)
         data.append("upload_preset", "insta-clone")
@@ -17,8 +25,8 @@ const CreatePost = () => {
                 method: "post",
                 body: data
             }
-        ).then(res=>res.json()).then(data=>setUrl(data.url))
-        .catch(err=>console.log(err))
+        ).then(res => res.json()).then(data => setUrl(data.url))
+            .catch(err => console.log(err))
 
         fetch("/create-post", {
             method: "post",
@@ -29,15 +37,17 @@ const CreatePost = () => {
             body: JSON.stringify({
                 title,
                 body,
-                pic:url
+                pic: url
             })
 
         }).then(res => res.json()).then(data => {
             if (data.error) {
                 M.toast({ html: data.error, classes: "#c62828 red darken-3" })
+                setIsLoading(false)
 
             } else {
-                M.toast({ html:"Created post Succecsfully", classes: "#00e676 green accent-3" })
+                M.toast({ html: "Created post Succecsfully", classes: "#00e676 green accent-3" })
+                setIsLoading(false)
                 history.push('/')
 
             }
@@ -59,9 +69,11 @@ const CreatePost = () => {
                     <input className="file-path validate" type="text" />
                 </div>
             </div>
-            <button class="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={postData}>
-                Submit
+            {isLoading ? <Loader /> :
+                <button class="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={postData}>
+                    Submit
                 </button>
+            }
 
         </div>
     )
