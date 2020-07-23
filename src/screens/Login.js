@@ -21,10 +21,14 @@ const Login = () => {
             })
 
         }).then(res => res.json()).then(data => {
-            if (data.error) {
-                M.toast({ html: data.error, classes: "#c62828 red darken-3" })
-
+            console.log(data)
+            // return;
+            if (data.eror) {
+                M.toast({ html: data.eror, classes: "#c62828 red darken-3" })
             } else {
+                console.log(data)
+                localStorage.setItem("token",data.token)
+                localStorage.setItem("user",JSON.stringify(data.user))
                 M.toast({ html:"Signed In Succecsfully", classes: "#00e676 green accent-3" })
                 history.push('/')
 

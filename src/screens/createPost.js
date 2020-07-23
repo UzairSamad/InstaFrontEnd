@@ -8,14 +8,13 @@ const CreatePost = () => {
 
     const [title, setTitle] = React.useState('')
     const [body, setBody] = React.useState('')
-    const [image, setImage] = React.useState('')
-    const [url, setUrl] = React.useState(null)
+    const [image, setImage] = React.useState(null)
+    const [url, setUrl] = React.useState('')
     const [isLoading, setIsLoading] = React.useState(false)
 
 
-
-    const postData = () => {
-        setIsLoading(true)
+    const uploadImage = () => {
+        setUrl(null)
         const data = new FormData()
         data.append("file", image)
         data.append("upload_preset", "insta-clone")
@@ -26,14 +25,26 @@ const CreatePost = () => {
                 body: data
             }
         ).then(res => res.json()).then(data => setUrl(data.url))
-            .catch(err => console.log(err))
+            .catch(err => setUrl(""))
+    }
 
+    React.useEffect(() => {
+        if (image != null) {
+            uploadImage()
+        }
+    }, [image])
+
+
+
+
+    const postData = () => {
+        setIsLoading(true)
         fetch("/create-post", {
             method: "post",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer" + localStorage.getItem("token")
             },
-
             body: JSON.stringify({
                 title,
                 body,
@@ -63,14 +74,16 @@ const CreatePost = () => {
             <div className="file-field input-field">
                 <div className="btn #64b5f6 blue darken-1">
                     <span>Upload Image</span>
-                    <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+                    <input type="file"
+                        onChange={(e) => setImage(e.target.files[0])}
+                    />
                 </div>
                 <div className="file-path-wrapper">
                     <input className="file-path validate" type="text" />
                 </div>
             </div>
             {isLoading ? <Loader /> :
-                <button class="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={postData}>
+                <button disabled={url != null? false : true} class="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={postData}>
                     Submit
                 </button>
             }
