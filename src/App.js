@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect ,useContext} from 'react'
+import React, { createContext, useReducer, useEffect, useContext } from 'react'
 import './App.css'
 import { makeStyles } from '@material-ui/core/styles';
 import NavBar from './components/Navbar'
@@ -15,11 +15,12 @@ export const UserContext = createContext()
 
 const Routing = () => {
   const history = useHistory()
-  const user = JSON.parse(localStorage.getItem("user"))
-  const {state,dispatch} = useContext(UserContext)
+  let    user = JSON.parse(localStorage.getItem("user"))
+
+  const { state, dispatch } = useContext(UserContext)
   useEffect(() => {
     if (user) {
-      dispatch({type:"USER",payload:user})
+      dispatch({ type: "USER", payload: user })
       history.push('/')
     } else {
       history.push('/login')

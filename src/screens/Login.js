@@ -25,8 +25,8 @@ const Login = () => {
         }).then(res => res.json()).then(data => {
             console.log(data)
             // return;
-            if (data.eror) {
-                M.toast({ html: data.eror, classes: "#c62828 red darken-3" })
+            if (data.error) {
+                M.toast({ html: data.error, classes: "#c62828 red darken-3" })
             } else {
                 console.log(data)
                 localStorage.setItem("token", data.token)

@@ -39,11 +39,12 @@ const CreatePost = () => {
 
     const postData = () => {
         setIsLoading(true)
+        let token = localStorage.getItem("token")
         fetch("/create-post", {
             method: "post",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer" + localStorage.getItem("token")
+                "Authorization": "Bearer " + token
             },
             body: JSON.stringify({
                 title,
@@ -62,7 +63,8 @@ const CreatePost = () => {
                 history.push('/')
 
             }
-        }).catch(err => console.log(err))
+        }).catch(err =>  M.toast({ html:"Internal Server Error", classes: "#c62828 red darken-3" })
+        )
     }
 
     console.log(title, body)
