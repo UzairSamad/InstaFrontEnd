@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
+import { UserContext } from '../App'
 
 const Profile = () => {
+
     const [data, setData] = useState([])
+    const { state, dispatch } = useContext(UserContext)
+    const [username, setUserName] = useState('')
+
+    console.log(state, 'ssss')
     useEffect(() => {
         let token = localStorage.getItem("token")
         fetch('/my-posts', {
@@ -13,7 +19,17 @@ const Profile = () => {
             setData(result.posts)
             console.log(data, 'data')
         }).catch(err => console.log(err))
+
+        if (state !== null) {
+            titleCase(state.name);
+        }
     }, [])
+
+    function titleCase(str) {
+        return str.toLowerCase().split(' ').map(function (word) {
+            setUserName(word.charAt(0).toUpperCase() + word.slice(1));
+        }).join(' ');
+    }
 
     return (
         <div style={{ maxWidth: '550px', margin: '0px auto' }}>
@@ -24,7 +40,7 @@ const Profile = () => {
                     />
                 </div>
                 <div>
-                    <h4>Ladan JAfrii</h4>
+                    <h4>{username}</h4>
                     <div style={{ display: "flex", justifyContent: "space-between", width: '108%' }}>
                         <h5>40 Posts</h5>
                         <h5>41 Followers</h5>
@@ -34,7 +50,7 @@ const Profile = () => {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                 {data.map(item => {
-                    return <img style={{ width:'30%',marginBottom:'10px',height:'200px'}} src={item.photo} />
+                    return <img style={{ width: '30%', marginBottom: '10px', height: '200px' }} src={item.photo} />
                 })}
             </div>
 
