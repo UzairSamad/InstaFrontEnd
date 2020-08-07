@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { UserContext } from '../App'
+import M from 'materialize-css'
+
 
 const Home = () => {
     const [data, setData] = useState([])
@@ -87,14 +89,29 @@ const Home = () => {
         }).catch(err => console.log(err))
 
     }
+    const deletePost = (postid) => {
+        let token = localStorage.getItem("token")
 
+        fetch(`/delete/${postid}`, {
+            method: "delete",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+        }).then(res => res.json()).then(result => {
+            let newData = data.filter(item => item._id !== result._id)
+            M.toast({ html: "Deleted Succesfully", classes: "#00e676 green accent-3" })
+            setData(newData)
+        }).catch(err => console.log(err))
+
+    }
     return (
         <div className='home'>
             {
                 data.map(item => {
                     return (
                         <div className='card home-card' key={item._id}>
-                            <h5 style={{ padding: '5px' }}>{item.postedBy.name} </h5>
+                            <h5 style={{ padding: '5px' }}>{item.postedBy.name} {item.postedBy._id === state._id && <i class="material-icons" style={{ float: 'right' }} onClick={() => { deletePost(item._id) }}>delete</i>} </h5>
                             <div className='card-image'>
                                 <img src={item.photo} />
                             </div>
@@ -111,12 +128,12 @@ const Home = () => {
                                 <p>{item.body}</p>
                                 {
                                     item.comments.map(record => {
-                                        return <h6 key={record._id} ><span style={{ fontWeight: "500"}}>{record.postedBy.name}</span>{record.text }</h6>
+                                        return <h6 key={record._id} ><span style={{ fontWeight: "500" }}>{record.postedBy.name}</span>{record.text}</h6>
                                     })
                                 }
                                 <form onSubmit={(e) => {
                                     e.preventDefault()
-                                    addComment(e.target[0].value,item._id)
+                                    addComment(e.target[0].value, item._id)
                                 }}>
                                     <input type='text' placeholder='Add a comment' />
                                 </form>
