@@ -7,6 +7,7 @@ import Profile from './screens/Profile'
 import Login from './screens/Login'
 import SignUp from './screens/SignUp'
 import CreatePost from './screens/createPost'
+import UserProfile from './screens/userProfile'
 import { reducer, initialState } from './reducers/userReducer'
 
 import { BrowserRouter, Route, useHistory, Switch } from 'react-router-dom'
@@ -32,7 +33,7 @@ const Routing = () => {
       <Route path="/" exact>
         <Home />
       </Route >
-      <Route path="/profile">
+      <Route exact path="/profile">
         <Profile />
       </Route >
       <Route path="/login">
@@ -43,6 +44,9 @@ const Routing = () => {
       </Route >
       <Route path="/createPost">
         <CreatePost />
+      </Route >
+      <Route path="/profile/:userid">
+        <UserProfile />
       </Route >
     </Switch>
   )
