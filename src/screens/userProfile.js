@@ -4,13 +4,11 @@ import { useParams } from 'react-router-dom'
 const UserProfile = () => {
 
     const [data, setData] = useState(null)
-    const [profile,setProfile] = useState({})
+    const [profile, setProfile] = useState({})
     const { state, dispatch } = useContext(UserContext)
     const [username, setUserName] = useState('')
     const { userid } = useParams()
-    console.log(data,'datadata')
 
-    // console.log(state, 'ssss')
     useEffect(() => {
         let token = localStorage.getItem("token")
         fetch(`/user/${userid}`, {
@@ -18,29 +16,74 @@ const UserProfile = () => {
                 "Authorization": "Bearer " + token
             }
         }).then(res => res.json())
-        .then(result => {
-            setData(result)
-            setProfile(result)
-            console.log(data,'result')
-        }).catch(err => console.log(err))
-       
-      
+            .then(result => {
+                setData(result)
+                setProfile(result)
+                console.log(data, 'result')
+            }).catch(err => console.log(err))
+
+
     }, [])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (data !== null) {
             titleCase(data.user[0].name);
         }
-    },[data])
-   
-    console.log(data, 'aaaaa')
-    console.log(profile, 'aaaaa')
-
+    }, [data])
 
     function titleCase(str) {
         return str.toLowerCase().split(' ').map(function (word) {
             setUserName(word.charAt(0).toUpperCase() + word.slice(1));
         }).join(' ');
+    }
+
+    const followUser = () => {
+        let token = localStorage.getItem("token")
+        fetch('/follow', {
+            method: 'put',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                followId: userid
+            })
+        }).then(res => res.json()).then(data => {
+            dispatch({ type: 'UPDATE', payload: { following: data.following, followers: data.followers } })
+            localStorage.setItem('user', JSON.stringify(data))
+            setData((prevstate) => {
+                let newfollowers = prevstate.user[0]
+                newfollowers.followers.push(data._id)
+                return {
+                    ...prevstate,
+                    user: [newfollowers]
+                }
+            })
+        }).catch(err => console.log(err))
+    }
+
+    const UnfollowUser = () => {
+        let token = localStorage.getItem("token")
+        fetch('/unfollow', {
+            method: 'put',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({
+                followId: userid
+            })
+        }).then(res => res.json()).then(data => {
+            dispatch({ type: 'UPDATE', payload: { following: data.following, followers: data.followers } })
+            localStorage.setItem('user', JSON.stringify(data))
+            setData((prevstate) => {
+                let newfollowers = prevstate.user[0]
+                return {
+                    ...prevstate,
+                    user: [newfollowers]
+                }
+            })
+        }).catch(err => console.log(err))
     }
 
     return (
@@ -58,9 +101,15 @@ const UserProfile = () => {
                             <h5>{data.user[0].email}</h5>
                             <div style={{ display: "flex", justifyContent: "space-between", width: '108%' }}>
                                 <h5>{data.posts.length}Posts</h5>
-                                <h5>41 Followers</h5>
-                                <h5>20 Following</h5>
+                                <h5>{data.user[0].followers.length} Followers</h5>
+                                <h5>{data.user[0].following.length}Following</h5>
                             </div>
+                            <button class="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={followUser}>
+                                Follow
+                            </button>
+                            <button class="btn waves-effect waves-light #64b5f6 blue darken-1" onClick={UnfollowUser}>
+                                Unfollow
+                            </button>
                         </div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
