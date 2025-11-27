@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "devDependencies": {
-    "react-scripts": "^3.0.0"
+    "react-scripts": "^5.0.1"
   },
   "dependencies": {
     "@material-ui/core": "^4.9.7",
